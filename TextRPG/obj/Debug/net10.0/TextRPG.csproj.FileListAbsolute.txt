@@ -1,0 +1,14 @@
+C:\Users\lchda\RiderProjects\TextRPG\TextRPG\bin\Debug\net10.0\TextRPG.exe
+C:\Users\lchda\RiderProjects\TextRPG\TextRPG\bin\Debug\net10.0\TextRPG.deps.json
+C:\Users\lchda\RiderProjects\TextRPG\TextRPG\bin\Debug\net10.0\TextRPG.runtimeconfig.json
+C:\Users\lchda\RiderProjects\TextRPG\TextRPG\bin\Debug\net10.0\TextRPG.dll
+C:\Users\lchda\RiderProjects\TextRPG\TextRPG\bin\Debug\net10.0\TextRPG.pdb
+C:\Users\lchda\RiderProjects\TextRPG\TextRPG\obj\Debug\net10.0\TextRPG.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\lchda\RiderProjects\TextRPG\TextRPG\obj\Debug\net10.0\TextRPG.AssemblyInfoInputs.cache
+C:\Users\lchda\RiderProjects\TextRPG\TextRPG\obj\Debug\net10.0\TextRPG.AssemblyInfo.cs
+C:\Users\lchda\RiderProjects\TextRPG\TextRPG\obj\Debug\net10.0\TextRPG.csproj.CoreCompileInputs.cache
+C:\Users\lchda\RiderProjects\TextRPG\TextRPG\obj\Debug\net10.0\TextRPG.dll
+C:\Users\lchda\RiderProjects\TextRPG\TextRPG\obj\Debug\net10.0\refint\TextRPG.dll
+C:\Users\lchda\RiderProjects\TextRPG\TextRPG\obj\Debug\net10.0\TextRPG.pdb
+C:\Users\lchda\RiderProjects\TextRPG\TextRPG\obj\Debug\net10.0\TextRPG.genruntimeconfig.cache
+C:\Users\lchda\RiderProjects\TextRPG\TextRPG\obj\Debug\net10.0\ref\TextRPG.dll

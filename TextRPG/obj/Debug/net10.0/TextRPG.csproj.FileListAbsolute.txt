@@ -12,3 +12,4 @@ C:\Users\lchda\RiderProjects\TextRPG\TextRPG\obj\Debug\net10.0\refint\TextRPG.dl
 C:\Users\lchda\RiderProjects\TextRPG\TextRPG\obj\Debug\net10.0\TextRPG.pdb
 C:\Users\lchda\RiderProjects\TextRPG\TextRPG\obj\Debug\net10.0\TextRPG.genruntimeconfig.cache
 C:\Users\lchda\RiderProjects\TextRPG\TextRPG\obj\Debug\net10.0\ref\TextRPG.dll
+C:\Users\lchda\RiderProjects\TextRPG\TextRPG\obj\Debug\net10.0\TextRPG.sourcelink.json

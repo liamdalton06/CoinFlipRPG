@@ -9,6 +9,7 @@ public class Game
 
     public void Run()
     {
+        List<Monster> monsters = new List<Monster>();
         Console.WriteLine("Welcome to TextRPG!");
 
         Player player = CreatePlayer();
@@ -23,9 +24,10 @@ public class Game
 
         while (player.Health > 0)
         {
-            EnemyEncounter(player, win);
+            EnemyEncounter(player, win, monsters);
         }
         Console.WriteLine("GAME OVER");
+        Console.WriteLine(monsters.Count() + "monsters defeated");
     }
 
     private static Player CreatePlayer()
@@ -56,7 +58,36 @@ public class Game
                 case "attack":
                     var flip = _combat.TryAttack();
 
-                    Console.Write($"{player.Name} flipped {flip.attack1} and {flip.attack2}, ");
+                    string flipText1;
+                    if (flip.attack1 == 1)
+                    {
+                        flipText1 = "heads";
+                    }
+                    else
+                    {
+                        flipText1 = "tails";
+                    }
+                    
+                    string flipText2;
+                    if (flip.attack2 == 1)
+                    {
+                        flipText2 = "heads";
+                    }
+                    else
+                    {
+                        flipText2 = "tails";
+                    }
+
+                    if (flip.attack1 == flip.attack2)
+                    {
+                        Console.Write($"{player.Name} flipped {flipText1} twice, ");
+
+                    }
+                    else
+                    {
+                        Console.Write($"{player.Name} flipped {flipText1} and {flipText2}, ");
+
+                    }
 
                     if (flip.hit)
                     {
@@ -103,8 +134,36 @@ public class Game
     private void EnemyTurn(Player player, Monster monster, bool isBlocked)
     {
         var flip = _combat.TryAttack();
+        string flipText1;
+        if (flip.attack1 == 1)
+        {
+            flipText1 = "heads";
+        }
+        else
+        {
+            flipText1 = "tails";
+        }
+                    
+        string flipText2;
+        if (flip.attack2 == 1)
+        {
+            flipText2 = "heads";
+        }
+        else
+        {
+            flipText2 = "tails";
+        }
 
-        Console.Write($"Monster flipped {flip.attack1} and {flip.attack2}, ");
+        if (flip.attack1 == flip.attack2)
+        {
+            Console.Write($"Monster flipped {flipText1} twice, ");
+
+        }
+        else
+        {
+            Console.Write($"Monster flipped {flipText1} and {flipText2}, ");
+
+        }
         if (flip.hit)
         {
             player.Health = isBlocked
@@ -120,7 +179,7 @@ public class Game
         Console.ReadLine();
         Console.WriteLine(".\n.\n.\n.");    }
 
-    private void EnemyEncounter(Player player, bool win)
+    private void EnemyEncounter(Player player, bool win, List<Monster> monsters)
     {
         Monster monster = new();
         Console.WriteLine($"Monster appeared with {monster.Health} HP");
@@ -138,6 +197,7 @@ public class Game
         if (player.Health > monster.Health)
         {
             Console.WriteLine($"{player.Name} wins the battle, {player.Health}HP");
+            monsters.Add(monster);
             win = true;
         }
         else

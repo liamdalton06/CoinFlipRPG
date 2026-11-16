@@ -22,11 +22,16 @@ public class Game
         Console.ReadLine();
         Console.WriteLine(".\n.\n.\n.\n.\n----------");
 
-        while (player.Health > 0)
+        for (var i = 0; i < 1; i++)
         {
+            EnemyEncounter(player, new Monster(), win, enemies);
+            
+            if (player.Health <= 0)
+            {
+                break;
+            }
             EnemyEncounter(player, new Giant(), win, enemies);
         }
-        Console.WriteLine("GAME OVER");
         Console.WriteLine($"{enemies.Count} enemies defeated");
     }
 
@@ -117,13 +122,24 @@ public class Game
         var flipText2 = flip.attack2 == 1 ? "heads" : "tails";
 
         Console.Write(flip.attack1 == flip.attack2
-            ? $"{enemy.Name} flipped {flipText1} twice, "
+            ? $"{enemy.Name} flipped {flipText1} twice and "
             : $"{enemy.Name} flipped {flipText1} and {flipText2}, ");
         if (flip.hit)
         {
+            float dmg = enemy.Damage;
+            if (enemy is Giant giant)
+            {
+                var result = giant.HeavyAttackDmg();
+                if (result.heavyHit)
+                {
+                    dmg = result.Damage;
+                    Console.WriteLine($"\nis preparing a HEAVY attack...");
+                }
+            }
+            
             player.Health = isBlocked
-                ? _combat.Block(enemy.Damage, player.Health)
-                : _combat.Attack(enemy.Damage, player.Health);
+                ? _combat.Block(dmg, player.Health)
+                : _combat.Attack(dmg, player.Health);
             
             Console.WriteLine($"hit {player.Name}, {player.Health}HP");
         }

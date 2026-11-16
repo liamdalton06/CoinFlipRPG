@@ -5,8 +5,8 @@ namespace TextRPG.Combat;
 public class CombatService
 {
     private readonly Random _random = new();
-
-    public int Attack(int damage, int receiverHealth)
+    
+    public float Attack(float damage, float receiverHealth)
     {
         receiverHealth -= damage;
         
@@ -26,7 +26,7 @@ public class CombatService
         return (attack1, attack2, hit);
     }
     
-    public int Block(int damage, int receiverHealth)
+    public float Block(float damage, float receiverHealth)
     {
         receiverHealth -= damage / 3;
         
@@ -37,9 +37,9 @@ public class CombatService
         return receiverHealth;
     }
 
-    public int Heal(int health, int maxHealth)
+    public float Heal(float health, float maxHealth)
     {
-        int heal = health + 25;
+        float heal = health + 30;
         
         if (heal  > maxHealth)
         {

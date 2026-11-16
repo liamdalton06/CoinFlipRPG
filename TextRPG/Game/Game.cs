@@ -9,7 +9,7 @@ public class Game
 
     public void Run()
     {
-        List<Monster> monsters = new List<Monster>();
+        List<Enemy> enemies = [];
         Console.WriteLine("Welcome to TextRPG!");
 
         Player player = CreatePlayer();
@@ -17,17 +17,17 @@ public class Game
         bool win = false;
 
         Console.WriteLine("\nWelcome to the dungeon");
-        Console.WriteLine($"\n{player.Name}, you will now fight your first monster...\n" +
+        Console.WriteLine($"\n{player.Name}, you will now fight your first enemy...\n" +
                           "Good luck (ENTER to continue):)");
         Console.ReadLine();
         Console.WriteLine(".\n.\n.\n.\n.\n----------");
 
         while (player.Health > 0)
         {
-            EnemyEncounter(player, win, monsters);
+            EnemyEncounter(player, new Giant(), win, enemies);
         }
         Console.WriteLine("GAME OVER");
-        Console.WriteLine(monsters.Count() + "monsters defeated");
+        Console.WriteLine($"{enemies.Count} enemies defeated");
     }
 
     private static Player CreatePlayer()
@@ -44,9 +44,9 @@ public class Game
         return new Player { Name = name };
     }
 
-    private bool PlayerTurn(Player player, Monster monster)
+    private bool PlayerTurn(Player player, Enemy enemy)
     {
-        BattleUI(player, monster);
+        BattleUi(player, enemy);
 
         while (true) 
         {
@@ -58,45 +58,22 @@ public class Game
                 case "attack":
                     var flip = _combat.TryAttack();
 
-                    string flipText1;
-                    if (flip.attack1 == 1)
-                    {
-                        flipText1 = "heads";
-                    }
-                    else
-                    {
-                        flipText1 = "tails";
-                    }
-                    
-                    string flipText2;
-                    if (flip.attack2 == 1)
-                    {
-                        flipText2 = "heads";
-                    }
-                    else
-                    {
-                        flipText2 = "tails";
-                    }
+                    var flipText1 = flip.attack1 == 1 ? "heads" : "tails";
 
-                    if (flip.attack1 == flip.attack2)
-                    {
-                        Console.Write($"{player.Name} flipped {flipText1} twice, ");
+                    var flipText2 = flip.attack2 == 1 ? "heads" : "tails";
 
-                    }
-                    else
-                    {
-                        Console.Write($"{player.Name} flipped {flipText1} and {flipText2}, ");
-
-                    }
+                    Console.Write(flip.attack1 == flip.attack2
+                        ? $"{player.Name} flipped {flipText1} twice, "
+                        : $"{player.Name} flipped {flipText1} and {flipText2}, ");
 
                     if (flip.hit)
                     {
-                        monster.Health = _combat.Attack(player.Damage, monster.Health);
-                        Console.WriteLine($"hit monster: {monster.Health}HP");
+                        enemy.Health = _combat.Attack(player.Damage, enemy.Health);
+                        Console.WriteLine($"hit {enemy.Name}: {enemy.Health}HP");
                     }
                     else
                     {
-                        Console.WriteLine($"missed monster, {monster.Health}HP");
+                        Console.WriteLine($"missed {enemy.Name}, {enemy.Health}HP");
                     }
 
                     Console.ReadLine();
@@ -124,6 +101,7 @@ public class Game
                 case "pass":
                     Console.WriteLine($"{player.Name} passed their turn");
                     return false;
+
                 default:
                     Console.WriteLine("That is not a valid action.");
                     break;
@@ -131,44 +109,21 @@ public class Game
         }
     }
 
-    private void EnemyTurn(Player player, Monster monster, bool isBlocked)
+    private void EnemyTurn(Player player, Enemy enemy, bool isBlocked)
     {
         var flip = _combat.TryAttack();
-        string flipText1;
-        if (flip.attack1 == 1)
-        {
-            flipText1 = "heads";
-        }
-        else
-        {
-            flipText1 = "tails";
-        }
-                    
-        string flipText2;
-        if (flip.attack2 == 1)
-        {
-            flipText2 = "heads";
-        }
-        else
-        {
-            flipText2 = "tails";
-        }
+        var flipText1 = flip.attack1 == 1 ? "heads" : "tails";
 
-        if (flip.attack1 == flip.attack2)
-        {
-            Console.Write($"Monster flipped {flipText1} twice, ");
+        var flipText2 = flip.attack2 == 1 ? "heads" : "tails";
 
-        }
-        else
-        {
-            Console.Write($"Monster flipped {flipText1} and {flipText2}, ");
-
-        }
+        Console.Write(flip.attack1 == flip.attack2
+            ? $"{enemy.Name} flipped {flipText1} twice, "
+            : $"{enemy.Name} flipped {flipText1} and {flipText2}, ");
         if (flip.hit)
         {
             player.Health = isBlocked
-                ? _combat.Block(monster.Damage, player.Health)
-                : _combat.Attack(monster.Damage, player.Health);
+                ? _combat.Block(enemy.Damage, player.Health)
+                : _combat.Attack(enemy.Damage, player.Health);
             
             Console.WriteLine($"hit {player.Name}, {player.Health}HP");
         }
@@ -177,32 +132,32 @@ public class Game
             Console.WriteLine($"missed {player.Name}: {player.Health}HP");
         }
         Console.ReadLine();
-        Console.WriteLine(".\n.\n.\n.");    }
+        Console.WriteLine(".\n.\n.\n."); 
+    }
 
-    private void EnemyEncounter(Player player, bool win, List<Monster> monsters)
+    private void EnemyEncounter(Player player, Enemy enemy, bool win, List<Enemy> enemies)
     {
-        Monster monster = new();
-        Console.WriteLine($"Monster appeared with {monster.Health} HP");
+        Console.WriteLine($"{enemy.Name} appeared with {enemy.Health} HP");
         Console.WriteLine($"Player: {player.Health} HP");
         
-        while (monster.Health > 0 && player.Health > 0)
+        while (enemy.Health > 0 && player.Health > 0)
         {
-            bool isBlocked = PlayerTurn(player, monster);
-            if (monster.Health <= 0 || player.Health <= 0)
+            bool isBlocked = PlayerTurn(player, enemy);
+            if (enemy.Health <= 0 || player.Health <= 0)
             {
                 break;
             }
-            EnemyTurn(player, monster, isBlocked);
+            EnemyTurn(player, enemy, isBlocked);
         }
-        if (player.Health > monster.Health)
+        if (player.Health > enemy.Health)
         {
             Console.WriteLine($"{player.Name} wins the battle, {player.Health}HP");
-            monsters.Add(monster);
+            enemies.Add(enemy);
             win = true;
         }
         else
         {
-            Console.WriteLine($"{player.Name} was defeated by monster");
+            Console.WriteLine($"{player.Name} was defeated by {enemy.Name}");
             win = false;
         }
         EndScreen(win);
@@ -224,11 +179,11 @@ public class Game
         Console.WriteLine("----------");
     }
 
-    private void BattleUI(Player player, Monster monster)
+    private void BattleUi(Player player, Enemy enemy)
     {
         Console.WriteLine("\n.\n.\n.\n---------------------\n" +
                           $"{player.Health}/{player.MaxHealth}HP | {player.Potions} potions" +
-                          $" | Monster: {monster.Health}/{monster.MaxHealth}HP\n---------------------" +
+                          $" | {enemy.Name}: {enemy.Health}/{enemy.MaxHealth}HP\n---------------------" +
                           "\nType an action: 'attack' -- 'block' -- 'heal' -- 'pass'");
     }
 }

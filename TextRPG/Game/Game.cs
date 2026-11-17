@@ -134,16 +134,30 @@ public class Game
     {
         var flip = _combat.TryAttack();
         var flipText1 = flip.attack1 == 1 ? "heads" : "tails";
-
         var flipText2 = flip.attack2 == 1 ? "heads" : "tails";
+        var flipText3 = flip.attack3 == 1 ? "heads" : "tails";
+        var sum = flip.attack3 + flip.attack2 + flip.attack1;
 
-        Console.Write(flip.attack1 == flip.attack2
-            ? $"{enemy.Name} flipped {flipText1} twice and "
-            : $"{enemy.Name} flipped {flipText1} and {flipText2}, ");
+        switch (sum)
+        {
+            case 6:
+                Console.Write($"{enemy.Name} flipped tails 3x, ");
+                break;
+            case 5:
+                Console.Write($"{enemy.Name} flipped tails 2x and heads once, ");
+                break;
+            case 4:
+                Console.Write($"{enemy.Name} flipped heads 2x and tails once, ");
+                break;
+            case 3:
+                Console.Write($"{enemy.Name} flipped heads 3x, ");
+                break;
+        }
+        
         if (flip.hit)
         {
-            float dmg = enemy.Damage;
-            if (enemy is Giant giant)
+            float dmg = flip.multi * enemy.Damage;
+            if (enemy is Giant giant && sum != 6)
             {
                 var result = giant.HeavyAttackDmg();
                 if (result.heavyHit)

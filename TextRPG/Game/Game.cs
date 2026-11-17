@@ -1,3 +1,4 @@
+using TextRPG.Art;
 using TextRPG.Combat;
 using TextRPG.Entities;
 
@@ -6,16 +7,19 @@ namespace TextRPG.Game;
 public class Game
 {
     private readonly CombatService _combat = new();
+    private readonly ASCII _ascii = new();
+
 
     public void Run()
     {
         List<Enemy> enemies = [];
         Console.WriteLine("Welcome to TextRPG!");
-
+        
+        ASCII.PlayerAvatar(); // GRAFIK
         Player player = CreatePlayer();
         
         bool win = false;
-
+        
         Console.WriteLine("\nWelcome to the dungeon");
         Console.WriteLine($"\n{player.Name}, you will now fight your first enemy...\n" +
                           "Good luck (ENTER to continue):)");
@@ -25,7 +29,6 @@ public class Game
         for (var i = 0; i < 1; i++)
         {
             EnemyEncounter(player, new Monster(), win, enemies);
-            
             if (player.Health <= 0)
             {
                 break;
@@ -66,7 +69,7 @@ public class Game
                     var flipText1 = flip.attack1 == 1 ? "heads" : "tails";
 
                     var flipText2 = flip.attack2 == 1 ? "heads" : "tails";
-
+                    
                     Console.Write(flip.attack1 == flip.attack2
                         ? $"{player.Name} flipped {flipText1} twice, "
                         : $"{player.Name} flipped {flipText1} and {flipText2}, ");
@@ -153,9 +156,18 @@ public class Game
 
     private void EnemyEncounter(Player player, Enemy enemy, bool win, List<Enemy> enemies)
     {
-        Console.WriteLine($"{enemy.Name} appeared with {enemy.Health} HP");
-        Console.WriteLine($"Player: {player.Health} HP");
+        Console.WriteLine($"{enemy.Name} appeared!");
         
+        switch (enemy)
+        {
+            case Monster:
+                ASCII.MonsterAvatar(); // GRAFIK
+                break;
+            case Giant:
+                ASCII.GiantAvatar(); // GRAFIK
+                break;
+        }
+
         while (enemy.Health > 0 && player.Health > 0)
         {
             bool isBlocked = PlayerTurn(player, enemy);
@@ -197,9 +209,10 @@ public class Game
 
     private void BattleUi(Player player, Enemy enemy)
     {
-        Console.WriteLine("\n.\n.\n.\n---------------------\n" +
+        Console.WriteLine("\n------------------------------------------\n" +
                           $"{player.Health}/{player.MaxHealth}HP | {player.Potions} potions" +
-                          $" | {enemy.Name}: {enemy.Health}/{enemy.MaxHealth}HP\n---------------------" +
+                          $" | {enemy.Name}: {enemy.Health}/{enemy.MaxHealth}" +
+                          $"HP\n------------------------------------------" +
                           "\nType an action: 'attack' -- 'block' -- 'heal' -- 'pass'");
     }
 }

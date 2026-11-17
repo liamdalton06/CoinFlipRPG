@@ -67,16 +67,29 @@ public class Game
                     var flip = _combat.TryAttack();
 
                     var flipText1 = flip.attack1 == 1 ? "heads" : "tails";
-
                     var flipText2 = flip.attack2 == 1 ? "heads" : "tails";
-                    
-                    Console.Write(flip.attack1 == flip.attack2
-                        ? $"{player.Name} flipped {flipText1} twice, "
-                        : $"{player.Name} flipped {flipText1} and {flipText2}, ");
+                    var flipText3 = flip.attack3 == 1 ? "heads" : "tails";
+                    var sum = flip.attack3 + flip.attack2 + flip.attack1;
 
+                    switch (sum)
+                    {
+                        case 6:
+                            Console.Write($"{player.Name} flipped tails 3x, ");
+                            break;
+                        case 5:
+                            Console.Write($"{player.Name} flipped tails 2x and heads once, ");
+                            break;
+                        case 4:
+                            Console.Write($"{player.Name} flipped heads 2x and tails once, ");
+                            break;
+                        case 3:
+                            Console.Write($"{player.Name} flipped heads 3x, ");
+                            break;
+                    }
+                    
                     if (flip.hit)
                     {
-                        enemy.Health = _combat.Attack(player.Damage, enemy.Health);
+                        enemy.Health = _combat.Attack(player.Damage * flip.multi, enemy.Health);
                         Console.WriteLine($"hit {enemy.Name}: {enemy.Health}HP");
                     }
                     else

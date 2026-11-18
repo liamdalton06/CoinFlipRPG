@@ -11,7 +11,7 @@ public class Game
 
     public void Run()
     {
-        GameStats stats = new GameStats();
+        GameStats stats = new GameStats(); // Searches JSON for player stats
         
         if (File.Exists("stats.json"))
         {
@@ -37,45 +37,47 @@ public class Game
                           "Good luck (ENTER to continue):)");
         Console.ReadLine();
         Console.WriteLine(".\n.\n.\n.\n.\n----------");
-        bool playing = true;
-        while (playing)
+        
+        outer:while (true)
         {
             EnemyEncounter(player, new Monster(), enemies);
-            if (player.Health <= 0) { break; }
+            if (player.Health <= 0) //{ break; }
 
            /* EnemyEncounter(player, new Giant(), enemies);
             if (player.Health <= 0){ break; } */
-            
+           
+           stats.EnemiesDefeated += enemies.Count; // Fix JSON Saves
+           if (enemies.Count > stats.AllTimeBest) // Must be done before play again switch
+           {
+               stats.AllTimeBest = enemies.Count;
+               Console.WriteLine("New high score!");
+           } 
+           
+           var updatedJson = JsonSerializer.Serialize(stats);
+
+           File.WriteAllText("stats.json", updatedJson);
+           Console.WriteLine($"{enemies.Count} enemies defeated | " +
+                             $"All time best: {stats.AllTimeBest} | " +
+                             $"{stats.EnemiesDefeated} defeated total");
+           
             Console.WriteLine("Play again? yes or no");
             var choice = Console.ReadLine();
             switch (choice)
             {
-                case "yes":
+                case "yes": // Reset stats & current progress
                     player.Potions = 3;
                     player.Damage = 25;
                     player.MaxHealth = 100;
-                    playing = true;
+                    player.Health = player.MaxHealth;
+                    player.HealMulti = 1;
+                    enemies.Clear();
                     continue;
                 case "no":
-                    playing = false;
-                    break;
+                    break outer;
             }
         }
-
         var win = player.Health > 0;
         EndScreen(win);
-        
-        stats.EnemiesDefeated += enemies.Count;
-        if (enemies.Count > stats.AllTimeBest)
-        {
-            stats.AllTimeBest = enemies.Count;
-            Console.WriteLine("New high score!");
-        }
-        
-        var updatedJson = JsonSerializer.Serialize(stats);
-
-        File.WriteAllText("stats.json", updatedJson);
-        Console.WriteLine($"{enemies.Count} enemies defeated | All time best: {stats.AllTimeBest} | {stats.EnemiesDefeated} defeated total");
     }
 
     private static Player CreatePlayer()
@@ -103,7 +105,7 @@ public class Game
 
             switch (action)
             {
-                case "attack":
+                case "attack": // Display & help calculate attacks from CombatService
                     var flip = _combat.TryAttack();
                     var sum = flip.attack3 + flip.attack2 + flip.attack1;
 
@@ -137,7 +139,7 @@ public class Game
                     Console.WriteLine(".\n.\n.\n.");
                     return false;
 
-                case "block":
+                case "block": // Decrease incoming damage through CombatService
                     Console.WriteLine($"{player.Name} prepares to block.");
                     return true;
 

@@ -11,37 +11,43 @@ public class Game
 
     public void Run()
     {
-        var json = File.ReadAllText("stats.json");
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-
-        GameStats stats = JsonSerializer.Deserialize<GameStats>(json, options)
-                          ?? new GameStats();
+        GameStats stats = new GameStats();
         
+        if (File.Exists("stats.json"))
+        {
+            string json = File.ReadAllText("stats.json");
+            
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            stats = JsonSerializer.Deserialize<GameStats>(json, options)
+                    ?? new GameStats();
+        }
+
         List<Enemy> enemies = [];
         Console.WriteLine("Welcome to TextRPG!");
         
         ASCII.PlayerAvatar(); // GRAFIK
         Player player = CreatePlayer();
-        
-        bool win = false;
-        
+
         Console.WriteLine("\nWelcome to the dungeon");
         Console.WriteLine($"\n{player.Name}, you will now fight your first enemy...\n" +
                           "Good luck (ENTER to continue):)");
         Console.ReadLine();
         Console.WriteLine(".\n.\n.\n.\n.\n----------");
 
-        for (var i = 0; i < 2; i++)
+        for (var i = 0; i < 1; i++)
         {
-            EnemyEncounter(player, new Monster(), win, enemies);
+            EnemyEncounter(player, new Monster(), enemies);
             if (player.Health <= 0) { break; }
 
-            EnemyEncounter(player, new Giant(), win, enemies);
-            if (player.Health <= 0){ break; }
+             EnemyEncounter(player, new Giant(), enemies);
+            if (player.Health <= 0){ break; } 
         }
+
+        var win = player.Health > 0;
         EndScreen(win);
 
         stats.EnemiesDefeated += enemies.Count;
@@ -98,11 +104,11 @@ public class Game
                     if (flip.hit)
                     {
                         enemy.Health = _combat.Attack(player.Damage * flip.multi, enemy.Health);
-                        Console.WriteLine($"hit {enemy.Name}: {enemy.Health}HP");
+                        Console.WriteLine($"hit {enemy.Name}: {enemy.Health:0.##}HP");
                     }
                     else
                     {
-                        Console.WriteLine($"missed {enemy.Name}, {enemy.Health}HP");
+                        Console.WriteLine($"missed {enemy.Name}, {enemy.Health:0.##}HP");
                     }
 
                     Console.ReadLine();
@@ -119,7 +125,7 @@ public class Game
                     {
                         player.Health = _combat.Heal(player.Health, player.MaxHealth, player.HealMulti);
                         player.Potions--;
-                        Console.WriteLine($"{player.Name} healed to {player.Health}HP, {player.Potions} potions left");
+                        Console.WriteLine($"{player.Name} healed to {player.Health:0.##}HP, {player.Potions} potions left");
                     }
                     else
                     {
@@ -177,17 +183,17 @@ public class Game
                 ? _combat.Block(dmg, player.Health)
                 : _combat.Attack(dmg, player.Health);
             
-            Console.WriteLine($"hit {player.Name}, {player.Health}HP");
+            Console.WriteLine($"hit {player.Name}, {player.Health:0.##}HP");
         }
         else
         {
-            Console.WriteLine($"missed {player.Name}: {player.Health}HP");
+            Console.WriteLine($"missed {player.Name}: {player.Health:0.##}HP");
         }
         Console.ReadLine();
         Console.WriteLine(".\n.\n.\n."); 
     }
 
-    private void EnemyEncounter(Player player, Enemy enemy, bool win, List<Enemy> enemies)
+    private void EnemyEncounter(Player player, Enemy enemy, List<Enemy> enemies)
     {
         Console.WriteLine($"{enemy.Name} appeared!");
         
@@ -212,20 +218,18 @@ public class Game
         }
         if (player.Health > enemy.Health)
         {
-            Console.Write($"{player.Name} wins the battle, {player.Health}HP | ");
+            Console.Write($"{player.Name} wins the battle, {player.Health:0.##}HP | ");
             enemies.Add(enemy);
-            win = true;
             player.Potions++;
             player.Damage *= 1.1f;
             player.MaxHealth *= 1.1f;
-            player.HealMulti = 1.1f;
+            player.HealMulti *= 1.1f;
             
             Console.WriteLine("Stats+ 10% | Potions +1");
         }
         else
         {
             Console.WriteLine($"{player.Name} was defeated by {enemy.Name}");
-            win = false;
         }
     }
 
@@ -241,8 +245,8 @@ public class Game
     private void BattleUi(Player player, Enemy enemy)
     {
         Console.WriteLine("\n------------------------------------------\n" +
-                          $"{player.Health}/{player.MaxHealth}HP | {player.Potions} potions" +
-                          $" | {enemy.Name}: {enemy.Health}/{enemy.MaxHealth}" +
+                          $"{player.Health:0.##}/{player.MaxHealth:0.##}HP | {player.Potions} potions" +
+                          $" | {enemy.Name}: {enemy.Health:0.##}/{enemy.MaxHealth:0.##}" +
                           $"HP\n------------------------------------------" +
                           "\nType an action: 'attack' -- 'block' -- 'heal' -- 'pass'");
     }

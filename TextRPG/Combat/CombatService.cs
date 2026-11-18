@@ -62,7 +62,8 @@ public class CombatService
 
     public float Heal(float health, float maxHealth, float healMulti)
     {
-        float heal = health + 30 * healMulti;
+        float heal = health + 30;
+        heal *= healMulti;
         
         if (heal  > maxHealth)
         {

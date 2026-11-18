@@ -37,13 +37,12 @@ public class Game
         for (var i = 0; i < 2; i++)
         {
             EnemyEncounter(player, new Monster(), win, enemies);
-            if (player.Health <= 0)
-            {
-                break;
-            }
+            if (player.Health <= 0) { break; }
+
             EnemyEncounter(player, new Giant(), win, enemies);
-            EndScreen(win);
+            if (player.Health <= 0){ break; }
         }
+        EndScreen(win);
 
         stats.EnemiesDefeated += enemies.Count;
         var updatedJson = JsonSerializer.Serialize(stats);
@@ -118,7 +117,7 @@ public class Game
 
                     if (player.Potions >= 1)
                     {
-                        player.Health = _combat.Heal(player.Health, player.MaxHealth);
+                        player.Health = _combat.Heal(player.Health, player.MaxHealth, player.HealMulti);
                         player.Potions--;
                         Console.WriteLine($"{player.Name} healed to {player.Health}HP, {player.Potions} potions left");
                     }
@@ -170,6 +169,7 @@ public class Game
                 {
                     dmg = result.Damage;
                     Console.WriteLine($"\nis preparing a HEAVY attack...");
+                    Console.ReadLine();
                 }
             }
             
@@ -218,6 +218,8 @@ public class Game
             player.Potions++;
             player.Damage *= 1.1f;
             player.MaxHealth *= 1.1f;
+            player.HealMulti = 1.1f;
+            
             Console.WriteLine("Stats+ 10% | Potions +1");
         }
         else

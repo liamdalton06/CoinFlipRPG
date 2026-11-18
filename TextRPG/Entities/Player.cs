@@ -7,4 +7,5 @@ public class Player(float health = 100)
     public float MaxHealth { get; set; } = health;
     public float Damage { get; set; } = 25;
     public int Potions  { get; set; } = 3;
+    public float HealMulti { get; set; } = 1;
 }

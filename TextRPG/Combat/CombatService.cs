@@ -60,9 +60,9 @@ public class CombatService
         return receiverHealth;
     }
 
-    public float Heal(float health, float maxHealth)
+    public float Heal(float health, float maxHealth, float healMulti)
     {
-        float heal = health + 30;
+        float heal = health + 30 * healMulti;
         
         if (heal  > maxHealth)
         {

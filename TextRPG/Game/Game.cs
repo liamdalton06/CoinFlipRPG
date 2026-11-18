@@ -42,6 +42,7 @@ public class Game
                 break;
             }
             EnemyEncounter(player, new Giant(), win, enemies);
+            EndScreen(win);
         }
 
         stats.EnemiesDefeated += enemies.Count;
@@ -211,16 +212,19 @@ public class Game
         }
         if (player.Health > enemy.Health)
         {
-            Console.WriteLine($"{player.Name} wins the battle, {player.Health}HP");
+            Console.Write($"{player.Name} wins the battle, {player.Health}HP | ");
             enemies.Add(enemy);
             win = true;
+            player.Potions++;
+            player.Damage *= 1.1f;
+            player.MaxHealth *= 1.1f;
+            Console.WriteLine("Stats+ 10% | Potions +1");
         }
         else
         {
             Console.WriteLine($"{player.Name} was defeated by {enemy.Name}");
             win = false;
         }
-        EndScreen(win);
     }
 
     private void EndScreen(bool win)

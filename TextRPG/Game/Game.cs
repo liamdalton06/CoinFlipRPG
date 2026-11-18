@@ -37,23 +37,45 @@ public class Game
                           "Good luck (ENTER to continue):)");
         Console.ReadLine();
         Console.WriteLine(".\n.\n.\n.\n.\n----------");
-
-        for (var i = 0; i < 1; i++)
+        bool playing = true;
+        while (playing)
         {
             EnemyEncounter(player, new Monster(), enemies);
             if (player.Health <= 0) { break; }
 
-             EnemyEncounter(player, new Giant(), enemies);
-            if (player.Health <= 0){ break; } 
+           /* EnemyEncounter(player, new Giant(), enemies);
+            if (player.Health <= 0){ break; } */
+            
+            Console.WriteLine("Play again? yes or no");
+            var choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "yes":
+                    player.Potions = 3;
+                    player.Damage = 25;
+                    player.MaxHealth = 100;
+                    playing = true;
+                    continue;
+                case "no":
+                    playing = false;
+                    break;
+            }
         }
 
         var win = player.Health > 0;
         EndScreen(win);
-
+        
         stats.EnemiesDefeated += enemies.Count;
+        if (enemies.Count > stats.AllTimeBest)
+        {
+            stats.AllTimeBest = enemies.Count;
+            Console.WriteLine("New high score!");
+        }
+        
         var updatedJson = JsonSerializer.Serialize(stats);
+
         File.WriteAllText("stats.json", updatedJson);
-        Console.WriteLine($"{enemies.Count} enemies defeated | {stats.EnemiesDefeated} defeated total");
+        Console.WriteLine($"{enemies.Count} enemies defeated | All time best: {stats.AllTimeBest} | {stats.EnemiesDefeated} defeated total");
     }
 
     private static Player CreatePlayer()

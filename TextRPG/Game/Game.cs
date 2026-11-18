@@ -1,17 +1,25 @@
 using TextRPG.Art;
 using TextRPG.Combat;
 using TextRPG.Entities;
+using System.Text.Json;
 
 namespace TextRPG.Game;
 
 public class Game
 {
     private readonly CombatService _combat = new();
-    private readonly ASCII _ascii = new();
-
 
     public void Run()
     {
+        var json = File.ReadAllText("stats.json");
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        GameStats stats = JsonSerializer.Deserialize<GameStats>(json, options)
+                          ?? new GameStats();
+        
         List<Enemy> enemies = [];
         Console.WriteLine("Welcome to TextRPG!");
         
@@ -35,7 +43,11 @@ public class Game
             }
             EnemyEncounter(player, new Giant(), win, enemies);
         }
-        Console.WriteLine($"{enemies.Count} enemies defeated");
+
+        stats.EnemiesDefeated += enemies.Count;
+        var updatedJson = JsonSerializer.Serialize(stats);
+        File.WriteAllText("stats.json", updatedJson);
+        Console.WriteLine($"{enemies.Count} enemies defeated | {stats.EnemiesDefeated} defeated total");
     }
 
     private static Player CreatePlayer()
@@ -65,10 +77,6 @@ public class Game
             {
                 case "attack":
                     var flip = _combat.TryAttack();
-
-                    var flipText1 = flip.attack1 == 1 ? "heads" : "tails";
-                    var flipText2 = flip.attack2 == 1 ? "heads" : "tails";
-                    var flipText3 = flip.attack3 == 1 ? "heads" : "tails";
                     var sum = flip.attack3 + flip.attack2 + flip.attack1;
 
                     switch (sum)
@@ -133,9 +141,6 @@ public class Game
     private void EnemyTurn(Player player, Enemy enemy, bool isBlocked)
     {
         var flip = _combat.TryAttack();
-        var flipText1 = flip.attack1 == 1 ? "heads" : "tails";
-        var flipText2 = flip.attack2 == 1 ? "heads" : "tails";
-        var flipText3 = flip.attack3 == 1 ? "heads" : "tails";
         var sum = flip.attack3 + flip.attack2 + flip.attack1;
 
         switch (sum)

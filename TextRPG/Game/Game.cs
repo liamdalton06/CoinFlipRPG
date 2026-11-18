@@ -34,7 +34,7 @@ public class Game
         Console.ReadLine();
         Console.WriteLine(".\n.\n.\n.\n.\n----------");
 
-        for (var i = 0; i < 1; i++)
+        for (var i = 0; i < 2; i++)
         {
             EnemyEncounter(player, new Monster(), win, enemies);
             if (player.Health <= 0)
@@ -230,16 +230,9 @@ public class Game
     private void EndScreen(bool win)
     {
         Console.WriteLine("----------");
-        
-        if (win)
-        {
-            Console.WriteLine("You won!");
-        }
-        else
-        {
-            Console.WriteLine("You lost!");
-        }
-        
+
+        Console.WriteLine(win ? "You won!" : "You lost!");
+
         Console.WriteLine("----------");
     }
 

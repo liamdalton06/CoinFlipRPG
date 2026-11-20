@@ -1,10 +1,7 @@
-﻿using TextRPG.Combat;
-
-namespace TextRPG.Entities;
+﻿namespace TextRPG.Entities;
 
 public class Giant() : Enemy(150, 25, "Giant")
 {
-    private readonly CombatService _combat = new();
     private readonly Random _random = new();
 
    

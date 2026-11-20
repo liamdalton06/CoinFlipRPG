@@ -1,5 +1,3 @@
-using TextRPG.Entities;
-
 namespace TextRPG.Combat;
 
 public class CombatService

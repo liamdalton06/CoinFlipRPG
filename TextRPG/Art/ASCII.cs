@@ -1,6 +1,6 @@
 ﻿namespace TextRPG.Art;
 
-public class ASCII
+public abstract class Ascii
 {
     public static void PlayerAvatar()
     {

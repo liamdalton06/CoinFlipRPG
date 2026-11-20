@@ -15,7 +15,7 @@ public class Game
         
         if (File.Exists("stats.json"))
         {
-            string json = File.ReadAllText("stats.json");
+            var json = File.ReadAllText("stats.json");
             
             var options = new JsonSerializerOptions
             {
@@ -29,8 +29,8 @@ public class Game
         List<Enemy> enemies = [];
         Console.WriteLine("Welcome to TextRPG!");
         
-        ASCII.PlayerAvatar(); // GRAFIK
-        Player player = CreatePlayer();
+        Ascii.PlayerAvatar(); // GRAPHICS
+        var player = CreatePlayer();
 
         Console.WriteLine("\nWelcome to the dungeon");
         Console.WriteLine($"\n{player.Name}, you will now fight your first enemy...\n" +
@@ -41,45 +41,55 @@ public class Game
         outer:while (true)
         {
             EnemyEncounter(player, new Monster(), enemies);
-            if (player.Health <= 0) //{ break; }
-
-           /* EnemyEncounter(player, new Giant(), enemies);
-            if (player.Health <= 0){ break; } */
-           
-           stats.EnemiesDefeated += enemies.Count; // Fix JSON Saves
-           if (enemies.Count > stats.AllTimeBest) // Must be done before play again switch
-           {
-               stats.AllTimeBest = enemies.Count;
-               Console.WriteLine("New high score!");
-           } 
-           
-           var updatedJson = JsonSerializer.Serialize(stats);
-
-           File.WriteAllText("stats.json", updatedJson);
-           Console.WriteLine($"{enemies.Count} enemies defeated | " +
-                             $"All time best: {stats.AllTimeBest} | " +
-                             $"{stats.EnemiesDefeated} defeated total");
-           
-            Console.WriteLine("Play again? yes or no");
-            var choice = Console.ReadLine();
-            switch (choice)
+            if (player.Health <= 0)
             {
-                case "yes": // Reset stats & current progress
-                    player.Potions = 3;
-                    player.Damage = 25;
-                    player.MaxHealth = 100;
-                    player.Health = player.MaxHealth;
-                    player.HealMulti = 1;
-                    enemies.Clear();
-                    continue;
-                case "no":
-                    break outer;
+                stats.SaveShowStats(enemies);
+                break;
             }
-        }
-        var win = player.Health > 0;
-        EndScreen(win);
-    }
+            EnemyEncounter(player, new Giant(), enemies);
+            if (player.Health <= 0)
+            {
+                stats.SaveShowStats(enemies);
+                break;
+            }
+           
+            var win = player.Health > 0;
+            stats.SaveShowStats(enemies);
+            EndScreen(win);
+           
+            string? choice;
+            do // Does player want to play again loop
+            {
+                Console.WriteLine("Play again? yes or no");
+                choice = Console.ReadLine()?.Trim().ToLowerInvariant() ?? string.Empty;
 
+                while (string.IsNullOrWhiteSpace(choice))
+                {
+                    Console.WriteLine("Yes or no");
+                    choice = Console.ReadLine()?.Trim().ToLowerInvariant() ?? string.Empty;
+                }
+                
+                inner:switch (choice)
+                {
+                    case "yes": // Reset stats & current progress
+                        player.Potions = 3;
+                        player.Damage = 25;
+                        player.MaxHealth = 100;
+                        player.Health = player.MaxHealth;
+                        player.HealMulti = 1;
+                        enemies.Clear();
+                        break inner;
+                    case "no":
+                        break outer;
+                    default:
+                        Console.WriteLine("Only yes or no");
+                        continue;
+                }
+            } 
+            while (choice is not ("yes" or "no"));
+        }
+    }
+    
     private static Player CreatePlayer()
     {
         Console.WriteLine("\nWhat is your name?");
@@ -224,10 +234,10 @@ public class Game
         switch (enemy)
         {
             case Monster:
-                ASCII.MonsterAvatar(); // GRAFIK
+                Ascii.MonsterAvatar(); // GRAPHICS
                 break;
             case Giant:
-                ASCII.GiantAvatar(); // GRAFIK
+                Ascii.GiantAvatar(); // GRAPHICS
                 break;
         }
 

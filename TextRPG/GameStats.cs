@@ -6,6 +6,26 @@ public class GameStats
     public int EnemiesDefeated {get; set;}
     public int AllTimeBest  {get; set;}
     
+    public static GameStats LoadStats()
+    {
+        GameStats stats = new();
+
+        if (File.Exists("stats.json"))
+        {
+            var json = File.ReadAllText("stats.json");
+            
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            stats = JsonSerializer.Deserialize<GameStats>(json, options)
+                    ?? new GameStats();
+        }
+
+        return stats;
+    }
+    
     public void SaveShowStats(List<Enemy> enemies)
     {
         EnemiesDefeated += enemies.Count; // Fix JSON Saves

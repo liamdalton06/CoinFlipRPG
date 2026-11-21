@@ -1,7 +1,6 @@
 using TextRPG.Art;
 using TextRPG.Combat;
 using TextRPG.Entities;
-using System.Text.Json;
 
 namespace TextRPG.Game;
 
@@ -11,21 +10,7 @@ public class Game
 
     public void Run()
     {
-        GameStats stats = new GameStats(); // Searches JSON for player stats
-        
-        if (File.Exists("stats.json"))
-        {
-            var json = File.ReadAllText("stats.json");
-            
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            stats = JsonSerializer.Deserialize<GameStats>(json, options)
-                    ?? new GameStats();
-        }
-
+        var stats = GameStats.LoadStats();
         List<Enemy> enemies = [];
         Console.WriteLine("Welcome to TextRPG!");
         
@@ -110,7 +95,7 @@ public class Game
 
         while (true) 
         {
-            string action = Console.ReadLine()?.Trim().ToLowerInvariant() ?? string.Empty;
+            var action = Console.ReadLine()?.Trim().ToLowerInvariant() ?? string.Empty;
             Console.WriteLine("\n.\n.");
 
             switch (action)
